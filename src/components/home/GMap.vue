@@ -9,26 +9,23 @@
                 :zoom="7"
                 map-type-id="terrain"
             >
-            <GmapMarker
-                :key="index"
-                v-for="(m, index) in markers"
-                :position="m.position"
-                :clickable="true"
-                :draggable="true"
-                @click="center=m.position"
-            />
-            </GmapMap>
+            </GmapMap> 
         </div>
     </div>
 </template>
 
 <script>
 import google from 'vue2-google-maps'
+import firebase from 'firebase'
 export default {
     name: 'GMap',
     data() {
         return {
         }
+    },
+
+    mounted() {
+        console.log(firebase.auth().currentUser)
     }
 }
 </script>
