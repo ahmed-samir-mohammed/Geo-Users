@@ -1,6 +1,6 @@
 <template>
     <div class="signup container">
-        <form @submit.prevent="signUp" class="card-panel">
+        <form @submit.prevent="logIn" class="card-panel">
             <h2 class="center deep-purple-text">LogIn</h2>
             <div class="field">
                 <label for="email">Email:</label>
@@ -10,7 +10,7 @@
                 <label for="password">Password:</label>
                 <input type="password" name="password" v-model="password">
             </div>
-                <p class="red-text center" v-if="feedbackFalse"> {{ feedback }} </p>
+                <p class="red-text center" v-if="feedback"> {{ feedback }} </p>
             <div class="field center">
                 <button class="btn deep-purple">SignUp</button>
             </div>
@@ -27,45 +27,22 @@ export default {
         return {
             email: null,
             password: null,
-            feedbackFalse: null,
-            feedbackTrue: null,
-            slug: null
+            feedback: null,
         }
     },
     methods: {
-        signUp () {
-            if  (this.alias && this.email && this.password) {
-                this.slug = slugify(this.alias, {
-                    replacement: '-',
-                    remove: /[$*_+~.()'"!-:@]/g,
-                    lower: true
+        logIn () {
+            if (this.email && this.password) {
+                firebase.auth().signInWithEmailAndPassword(this.email, this.password).then(USERS => {
+                    console.log(USERS)
+                }).then(() => {
+                    this.$router.push({name: 'GMap'})
+                }).catch(err => {
+                    this.feedback = err.message
                 })
-                let ref = db.collection('users').doc(this.slug)
-                ref.get().then(doc => {
-                    if (doc.exists) {
-                        this.feedbackFalse = 'This Alias Already Exists'
-                    } else {
-                        firebase.auth().createUserWithEmailAndPassword(this.email, this.password).then(USERS => {
-                            // console.log(USERS)
-                            ref.set({
-                                alias: this.alias,
-                                geolocation: null,
-                                user_id: USERS.user.uid
-                            })
-                        }).then(() => {
-                            this.$router.push({name: 'GMap'})
-                        }).catch(err => {
-                            console.log(err)
-                            this.feedbackFalse = err.message
-                            this.feedbackTrue = null
-                        })
-                        this.feedbackTrue = 'This Alias is Free'
-                        this.feedbackFalse = null
-                    }
-                })
-                
+                this.feedback = null
             } else {
-                this.feedbackFalse = 'Please Enter Your Alias'
+                this.feedbackFalse = 'Please Enter Your Email And Password'
             }
         }
     }
