@@ -17,6 +17,7 @@
 <script>
 import google from 'vue2-google-maps'
 import firebase from 'firebase'
+import db from '@/firebase/init'
 export default {
     name: 'GMap',
     data() {
@@ -45,16 +46,35 @@ export default {
         }
     },
     mounted() {
+        let user = firebase.auth().currentUser
+
         // Get User Geo Location
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(pos => {
                 this.lat = pos.coords.latitude
                 this.lng = pos.coords.longitude
+
+                // find the user record and then update geocoords
+                db.collection('users').where('user_id', '==', user.uid).get().then(snapshot => {
+                    snapshot.forEach((doc) => {
+                        db.collection('users').doc(doc.id).updated({
+                            geolocation: {
+                                lat: pos.coords.latitude,
+                                lng: pos.coords.longitude  
+                            }
+                        })
+                    })
+                }).then(() => {
+                    this.geolocate()
+                })
                 this.geolocate()
             }, (err) => {
                 console.log(err)
                 this.geolocate()
-            }, {maximumAge: 6000, timeout: 1000})
+            }, {
+                maximumAge: 6000, 
+                timeout: 1000
+            })
         } else {
             // Position Center By Default Values
             this.geolocate();
