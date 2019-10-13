@@ -4,7 +4,7 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import * as VueGoogleMaps from 'vue2-google-maps'
-import firebase from 'firebase'
+import * as firebase from 'firebase'
 
 Vue.use(VueGoogleMaps, {
   load: {
