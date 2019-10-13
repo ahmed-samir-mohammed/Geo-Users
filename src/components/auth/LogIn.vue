@@ -34,7 +34,6 @@ export default {
         logIn () {
             if (this.email && this.password) {
                 firebase.auth().signInWithEmailAndPassword(this.email, this.password).then(USERS => {
-                    console.log(USERS)
                 }).then(() => {
                     this.$router.push({name: 'GMap'})
                 }).catch(err => {

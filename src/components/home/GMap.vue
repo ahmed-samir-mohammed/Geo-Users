@@ -23,8 +23,8 @@ export default {
     data() {
         return {
             center: { 
-                lat: 45.508, 
-                lng: -73.587 
+                lat: 0, 
+                lng: 0
             },
             markers: [],
             places: [],
@@ -46,7 +46,7 @@ export default {
         }
     },
     mounted() {
-        
+        // get current user
         let user = firebase.auth().currentUser
 
         // Get User Geo Location
@@ -54,12 +54,10 @@ export default {
             navigator.geolocation.getCurrentPosition(pos => {
                 this.lat = pos.coords.latitude
                 this.lng = pos.coords.longitude
-                // console.log(this.lat, this.lng)
+
                 // find the user record and then update geocoords
                 db.collection('users').where('user_id', '==', user.uid).get().then(snapshot => {
-                    console.log(`${this.lat} ${this.lng} in collection`)
                     snapshot.forEach((doc) => {
-                        console.log(`${this.lat} ${this.lng} in Snapshot`)
                         db.collection('users').doc(doc.id).update({
                             geolocation: {
                                 lat: pos.coords.latitude,
@@ -70,13 +68,8 @@ export default {
                 }).then(() => {
                     this.geolocate()
                 })
-                this.geolocate()
             }, (err) => {
                 console.log(err)
-                this.geolocate()
-            }, {
-                maximumAge: 6000, 
-                timeout: 1000
             })
         } else {
             // Position Center By Default Values
