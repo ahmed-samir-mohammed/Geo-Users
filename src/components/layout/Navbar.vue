@@ -31,6 +31,10 @@ export default {
             })
         }
     },
+    created() {
+        // let user = firebase.auth().currentUser
+        firebase.auth().onAuthStateChanged()
+    },
 }
 </script>
 
