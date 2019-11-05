@@ -43,6 +43,22 @@ export default {
                     lng: position.coords.longitude
                 };
             });
+            db.collection('users').get().then(users => {
+                users.docs.forEach(doc => {
+                    let data = doc.data()
+                    console.log(data)
+                    if (data.geolocation) {
+                        console.log(data.geolocation)
+                        // let marker = new google.map.Marker({
+                        //     position: {
+                        //         lat: data.geolocation.lat,
+                        //         lng: data.geolocation.lng
+                        //     },
+                        //     map
+                        // })
+                    }
+                })
+            })
         }
     },
     mounted() {

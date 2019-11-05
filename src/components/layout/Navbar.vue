@@ -6,9 +6,10 @@
                     <router-link :to="{name: 'GMap'}">GeoUsers!</router-link>
                 </a>
                 <ul class="right">
-                    <li><router-link :to="{name: 'SignUp'}">SignUp</router-link></li>
-                    <li><router-link :to="{name: 'LogIn'}">LogIn</router-link></li>
-                    <li><a @click="logOut">LogOut</a></li>
+                    <li v-if="!user"><router-link :to="{name: 'SignUp'}">SignUp</router-link></li>
+                    <li v-if="!user"><router-link :to="{name: 'LogIn'}">LogIn</router-link></li>
+                    <li v-if="user"><a> {{ user.email }} </a></li>
+                    <li v-if="user"><a @click="logOut">LogOut</a></li>
                 </ul>
             </div>
         </nav>
@@ -21,7 +22,7 @@ export default {
     name: 'Navbar',
     data () {
         return {
-
+            user: null
         }
     },
     methods: {
@@ -32,8 +33,17 @@ export default {
         }
     },
     created() {
-        // let user = firebase.auth().currentUser
-        firebase.auth().onAuthStateChanged()
+        let user = firebase.auth().currentUser
+        console.log(user)
+        firebase.auth().onAuthStateChanged((user) => {
+            // console.log(user)
+            if (user) {
+                // console.log(user)
+                this.user = user                
+            } else {
+                this.user = null
+            }
+        })
     },
 }
 </script>
